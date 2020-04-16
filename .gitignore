@@ -1,0 +1,10 @@
+__pycache__
+*.so
+build/
+*.pyc
+*.c
+/experiments/*
+/shapenet/data/*
+*.cpp
+/trash/
+!.gitkeep

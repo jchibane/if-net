@@ -1,0 +1,125 @@
+# Implict Feature Networks
+> Implicit Functions in Feature Space for Shape Reconstruction and Completion <br />
+> [Julian Chibane](http://virtualhumans.mpi-inf.mpg.de/people/Chibane.html), [Thiemo Alldieck](http://virtualhumans.mpi-inf.mpg.de/people/alldieck.html), [Gerard Pons-Moll](http://virtualhumans.mpi-inf.mpg.de/people/pons-moll.html)
+
+![Teaser](teaser.gif)
+
+[Paper](https://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet.pdf) - 
+[Supplementaty](https://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet_supp.pdf) -
+[Project Website](https://virtualhumans.mpi-inf.mpg.de/ifnets/) -
+[Arxiv](https://arxiv.org/abs/2003.01456) -
+Video -
+Slides -
+Published in CVPR 2020.
+
+
+#### Citation
+    @inproceedings{chibane20ifnet,
+        title = {Implicit Functions in Feature Space for 3D Shape Reconstruction and Completion},
+        author = {Chibane, Julian and Alldieck, Thiemo and Pons-Moll, Gerard},
+        booktitle = {{IEEE} Conference on Computer Vision and Pattern Recognition (CVPR)},
+        month = {jun},
+        organization = {{IEEE}},
+        year = {2020},
+    }
+
+## Install
+
+A linux system with cuda 9.0 is required for the project.
+
+The `if-net_env.yml` file contains all necessary python dependencies for the project.
+To convinietnly install them automatically with [anaconda](https://www.anaconda.com/) you can use:
+```
+conda env create -f if-net_env.yml
+conda activate if-net
+```
+
+Please clone the repository and navigate into it in your terminal, its location is assumed for all subsequent commands.
+
+> This project uses libraries for [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et. al. CVPR'19] 
+> and the ShapeNet data peprocessed for [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], please also cite them if you use our code.
+
+Install the needed libraries with:
+```
+cd data_processing/libmesh/
+python setup.py build_ext --inplace
+cd ../libvoxelize/
+python setup.py build_ext --inplace
+cd ../..
+```
+
+## Data Preparation
+Download the [ShapeNet](https://www.shapenet.org/) data preprocessed by [Xu et. al. NeurIPS'19] from [here](https://drive.google.com/drive/folders/1QGhDW335L7ra31uw5U-0V7hB-viA0JXr)
+into the `shapenet` folder.
+
+Now extract the files into `shapenet\data` with:
+
+```
+ls shapenet/*.tar.gz |xargs -n1 -i tar -xf {} -C shapenet/data/
+```
+
+Next, the inputs and training point samples for IF-Nets are created. The following three commands can be run in parallel on multiple machines to significantlly increse speed.
+First, the data is converted to the `.off` format and scaled using
+```
+python data_processing/convert_to_scaled_off.py
+```
+The input data for Voxel Super-Resolution of voxels is created with
+```
+python data_processing/voxelize.py -res 32
+```
+using `-res 32` for 32<sup>3</sup> and `-res 128` for 128<sup>3</sup> resolution.
+
+The input data for Point Cloud Completion is created with
+```
+python data_processing/voxelized_pointcloud_sampling.py -res 128 -num_points 300
+```
+using `-num_points 300` for point clouds with 300 points and `-num_points 3000` for 3000 points.
+
+In order to remove meshes that could not be preprocessed (should not be more than around 15 meshes) you should run
+```
+python data_processing/filter_corrupted.py -file 'voxelization_32.npy' -delete
+```
+## Training
+The training of IF-Nets is started running
+```
+python train.py -std_dev 0.1 0.01 -res 32 -m ShapeNet32Vox -batch_size 6
+```
+where `-std_dev` indicates the sigmas to use, `-res` the input resolution (32<sup>3</sup> or 128<sup>3</sup>), `-m` the IF-Net model setup
++ ShapeNet32Vox for 32<sup>3</sup> voxel Super-Resolution experiment
++ ShapeNet128Vox for 128<sup>3</sup> voxel Super-Resolution experiment
++ ShapeNetPoints for Point Cloud Completion experiments
++ SVR for 3D Single-View Reconstruction
+
+and `-batch_size` the number of different meshes inputted in a batch, each with 50.000 point samples (=6 for small GPU's). Consider using the highest possible `batch_size` in order to speed up training.
+
+In the `experiments/` folder you can find an experiment folder containing the model checkpoints, the checkpoint of validation minimum, and a folder containing a tensorboard summary, which can be started at with
+```
+tensorboard --logdir experiments/YOUR_EXPERIMENT/summary/ --host 0.0.0.0
+```
+## Generation
+The command
+```
+python generate.py -std_dev 0.1 0.01 -res 32 -m ShapeNet32Vox -checkpoint 10 -batch_points 400000
+```
+generates the reconstructions of the, during trainin unseen, test examples from ShapeNet into  the folder 
+```experiments/YOUR_EXPERIMENT/evaluation_CHECKPOINT_@256/generation```.
+With `-checkpoint` you can choose the IF-Net model checkpoint. Use the model with minimum validation error for this, 
+`-batch_points` indicates the number of points that fit into GPU memory at once (400k for small GPU's), the other parameters are set as during training. 
+> The generation script can be run on multiple machines in parallel in order to increase generation speed significantly. Also consider using the maximal batch size possible for your GPU.
+## Evaluation
+Please run
+```
+python data_processing/evaluate.py -reconst -generation_path experiments/iVoxels_dist-0.5_0.5_sigmas-0.1_0.01_v32_mShapeNet32Vox/evaluation_10_@256/generation/
+```
+to evaluate each reconstruction, where `-generation_path` is the path to the reconstructed objects generated in the previous step.
+> The above evaluation script can be run on multiple machines in parallel in order to increase generation speed significantly.
+
+The quantitative evaluation of all reconstructions and inputs are gathered and put into `experiment/YOUR_EXPERIMENT/evaluation_CHECKPOINT_@256` using
+```
+python data_processing/evaluate_gather.py -voxel_input -res 32 -generation_path experiments/iVoxels_dist-0.5_0.5_sigmas-0.1_0.01_v32_mShapeNet32Vox/evaluation_10_@256/generation/
+```
+where you should use `-voxel_input` for Voxel Super-Resolution experiments, with `-res` specifing the input resolution or `-pc_input` for Point Cloud Completion, with `-points` specifing the number of points used.
+
+## Contact
+
+For questions and comments regarding the code please contact [Julian Chibane](http://virtualhumans.mpi-inf.mpg.de/people/Chibane.html) via mail. (See Paper)
