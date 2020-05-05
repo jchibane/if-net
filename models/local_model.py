@@ -2,13 +2,19 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# 1D convolution is used for the decoder. It acts as a standard FC, but allows to use a batch of point samples features,
+# additionally to the batch over the input objects.
+# The dimensions are used as follows:
+# batch_size (N) = #3D objects , channels = features, signal_lengt (L) (convolution dimension) = #point samples
+# kernel_size = 1 i.e. every convolution is done over only all features of one point sample, this makes it a FC.
+
+
 # ShapeNet Voxel Super-Resolution --------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
 class ShapeNet32Vox(nn.Module):
 
     def __init__(self, hidden_dim=256):
         super(ShapeNet32Vox, self).__init__()
-        # accepts 128**3 res input
 
         self.conv_1 = nn.Conv3d(1, 32, 3, padding=1)  # out: 32
         self.conv_1_1 = nn.Conv3d(32, 64, 3, padding=1)  # out: 32
@@ -87,7 +93,7 @@ class ShapeNet32Vox(nn.Module):
 class ShapeNet128Vox(nn.Module):
 
     def __init__(self, hidden_dim=256):
-        super(ShapeNet300Points, self).__init__()
+        super(ShapeNet128Vox, self).__init__()
         # accepts 128**3 res input
         self.conv_in = nn.Conv3d(1, 16, 3, padding=1)  # out: 128
         self.conv_0 = nn.Conv3d(16, 32, 3, padding=1)  # out: 64

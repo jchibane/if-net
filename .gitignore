@@ -8,3 +8,4 @@ build/
 *.cpp
 /trash/
 !.gitkeep
+/todo.txt

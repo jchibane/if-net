@@ -36,6 +36,9 @@ if args.model ==  'ShapeNet128Vox':
 if args.model == 'ShapeNetPoints':
     net = model.ShapeNetPoints()
 
+if args.model == 'SVR':
+    net = model.SVR()
+
 
 
 train_dataset = voxelized_data.VoxelizedDataset('train', voxelized_pointcloud= args.pointcloud, pointcloud_samples= args.pc_samples, res=args.res, sample_distribution=args.sample_distribution,

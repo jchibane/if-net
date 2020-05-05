@@ -53,8 +53,10 @@ class Trainer(object):
         # General points
         logits = self.model(p,inputs)
         loss_i = F.binary_cross_entropy_with_logits(
-            logits, occ, reduction='none')
-        loss = loss_i.sum(-1).mean()
+            logits, occ, reduction='none')# out = (B,num_points) by componentwise comparing vecots of size num_samples:
+        # l(logits[n],occ[n]) for each n in B. i.e. l(logits[n],occ[n]) is vector of size num_points again.
+
+        loss = loss_i.sum(-1).mean() # loss_i summed over all #num_samples samples -> out = (B,1) and mean over batch -> out = (1)
 
         return loss
 

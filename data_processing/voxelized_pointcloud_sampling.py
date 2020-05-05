@@ -8,6 +8,7 @@ import multiprocessing as mp
 from multiprocessing import Pool
 import argparse
 import random
+import traceback
 
 ROOT = 'shapenet/data/'
 
@@ -41,7 +42,7 @@ def voxelized_pointcloud_sampling(path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Run boundary sampling'
+        description='Run point cloud sampling'
     )
 
     parser.add_argument('-res', type=int)
