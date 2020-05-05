@@ -1,3 +1,4 @@
+
 # Implict Feature Networks
 > Implicit Functions in Feature Space for Shape Reconstruction and Completion <br />
 > [Julian Chibane](http://virtualhumans.mpi-inf.mpg.de/people/Chibane.html), [Thiemo Alldieck](http://virtualhumans.mpi-inf.mpg.de/people/alldieck.html), [Gerard Pons-Moll](http://virtualhumans.mpi-inf.mpg.de/people/pons-moll.html)
@@ -28,7 +29,7 @@ Published in CVPR 2020.
 A linux system with cuda 9.0 is required for the project.
 
 The `if-net_env.yml` file contains all necessary python dependencies for the project.
-To convinietnly install them automatically with [anaconda](https://www.anaconda.com/) you can use:
+To conveniently install them automatically with [anaconda](https://www.anaconda.com/) you can use:
 ```
 conda env create -f if-net_env.yml
 conda activate if-net
@@ -37,7 +38,7 @@ conda activate if-net
 Please clone the repository and navigate into it in your terminal, its location is assumed for all subsequent commands.
 
 > This project uses libraries for [Occupancy Networks](https://github.com/autonomousvision/occupancy_networks) by [Mescheder et. al. CVPR'19] 
-> and the ShapeNet data peprocessed for [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], please also cite them if you use our code.
+> and the ShapeNet data preprocessed for [DISN](https://github.com/Xharlie/DISN) by [Xu et. al. NeurIPS'19], please also cite them if you use our code.
 
 Install the needed libraries with:
 ```
@@ -58,8 +59,8 @@ Now extract the files into `shapenet\data` with:
 ls shapenet/*.tar.gz |xargs -n1 -i tar -xf {} -C shapenet/data/
 ```
 
-Next, the inputs and training point samples for IF-Nets are created. The following three commands can be run in parallel on multiple machines to significantlly increse speed.
-First, the data is converted to the `.off` format and scaled using
+Next, the inputs and training point samples for IF-Nets are created. The following three commands can be run in parallel on multiple machines to significantly increase speed.
+First, the data is converted to the .off-format and scaled using
 ```
 python data_processing/convert_to_scaled_off.py
 ```
@@ -75,10 +76,27 @@ python data_processing/voxelized_pointcloud_sampling.py -res 128 -num_points 300
 ```
 using `-num_points 300` for point clouds with 300 points and `-num_points 3000` for 3000 points.
 
+Training input points and the corresponding ground truth occupancy values are generated with
+```
+python data_processing/boundary_sampling.py -sigma 0.1
+python data_processing/boundary_sampling.py -sigma 0.01
+```
+where `-sigma` specifies the standard deviation of the normally distributed displacements added onto surface samples.
+
 In order to remove meshes that could not be preprocessed (should not be more than around 15 meshes) you should run
 ```
 python data_processing/filter_corrupted.py -file 'voxelization_32.npy' -delete
 ```
+The input data can be visualized by converting them to .off-format using
+```
+python data_processing/create_voxel_off.py -res 32
+```
+for voxel input and 
+```
+python data_processing/create_pc_off.py -res 128 -num_points 300
+```
+where `-res` and `-num_points` matches the values from the previous steps.
+
 ## Training
 The training of IF-Nets is started running
 ```
@@ -101,11 +119,11 @@ The command
 ```
 python generate.py -std_dev 0.1 0.01 -res 32 -m ShapeNet32Vox -checkpoint 10 -batch_points 400000
 ```
-generates the reconstructions of the, during trainin unseen, test examples from ShapeNet into  the folder 
+generates the reconstructions of the, during training unseen, test examples from ShapeNet into  the folder 
 ```experiments/YOUR_EXPERIMENT/evaluation_CHECKPOINT_@256/generation```.
 With `-checkpoint` you can choose the IF-Net model checkpoint. Use the model with minimum validation error for this, 
 `-batch_points` indicates the number of points that fit into GPU memory at once (400k for small GPU's), the other parameters are set as during training. 
-> The generation script can be run on multiple machines in parallel in order to increase generation speed significantly. Also consider using the maximal batch size possible for your GPU.
+> The generation script can be run on multiple machines in parallel in order to increase generation speed significantly. Also, consider using the maximal batch size possible for your GPU.
 ## Evaluation
 Please run
 ```
@@ -118,7 +136,7 @@ The quantitative evaluation of all reconstructions and inputs are gathered and p
 ```
 python data_processing/evaluate_gather.py -voxel_input -res 32 -generation_path experiments/iVoxels_dist-0.5_0.5_sigmas-0.1_0.01_v32_mShapeNet32Vox/evaluation_10_@256/generation/
 ```
-where you should use `-voxel_input` for Voxel Super-Resolution experiments, with `-res` specifing the input resolution or `-pc_input` for Point Cloud Completion, with `-points` specifing the number of points used.
+where you should use `-voxel_input` for Voxel Super-Resolution experiments, with `-res` specifying the input resolution or `-pc_input` for Point Cloud Completion, with `-points` specifying the number of points used.
 
 ## Contact
 
