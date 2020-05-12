@@ -1,7 +1,7 @@
 import numpy as np
 import trimesh
 from pykdtree.kdtree import KDTree
-from implicit_waterproofing import implicit_waterproofing
+from data_processing.implicit_waterproofing import implicit_waterproofing
 
 # mostly apdopted from occupancy_networks/im2mesh/common.py and occupancy_networks/im2mesh/eval.py
 

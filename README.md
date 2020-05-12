@@ -126,13 +126,21 @@ With `-checkpoint` you can choose the IF-Net model checkpoint. Use the model wit
 > The generation script can be run on multiple machines in parallel in order to increase generation speed significantly. Also, consider using the maximal batch size possible for your GPU.
 ## Evaluation
 Please run
+
 ```
 python data_processing/evaluate.py -reconst -generation_path experiments/iVoxels_dist-0.5_0.5_sigmas-0.1_0.01_v32_mShapeNet32Vox/evaluation_10_@256/generation/
 ```
 to evaluate each reconstruction, where `-generation_path` is the path to the reconstructed objects generated in the previous step.
 > The above evaluation script can be run on multiple machines in parallel in order to increase generation speed significantly.
 
+Then run
+```
+python data_processing/evaluate.py -voxels -res 32
+```
+ to evaluate the quality of the input. For voxel girds use '-voxels' with '-res' to specify the input resolution and for point clouds use '-pc' with '-points' to specify the number of points.
+
 The quantitative evaluation of all reconstructions and inputs are gathered and put into `experiment/YOUR_EXPERIMENT/evaluation_CHECKPOINT_@256` using
+
 ```
 python data_processing/evaluate_gather.py -voxel_input -res 32 -generation_path experiments/iVoxels_dist-0.5_0.5_sigmas-0.1_0.01_v32_mShapeNet32Vox/evaluation_10_@256/generation/
 ```

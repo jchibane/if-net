@@ -1,6 +1,6 @@
 import os
 import trimesh
-from models.evaluation import eval_mesh
+from data_processing.evaluation import eval_mesh
 import traceback
 import pickle as pkl
 import numpy as np
