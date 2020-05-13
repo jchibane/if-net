@@ -108,7 +108,9 @@ where `-std_dev` indicates the sigmas to use, `-res` the input resolution (32<su
 + ShapeNetPoints for Point Cloud Completion experiments
 + SVR for 3D Single-View Reconstruction
 
-and `-batch_size` the number of different meshes inputted in a batch, each with 50.000 point samples (=6 for small GPU's). Consider using the highest possible `batch_size` in order to speed up training.
+and `-batch_size` the number of different meshes inputted in a batch, each with 50.000 point samples (=6 for small GPU's). 
+If you want to train with point cloud input please add `-pointcloud` and `-pc_samples` followed by the number of point samples used, e.g. `-pc_samples 3000`.
+Consider using the highest possible `batch_size` in order to speed up training.
 
 In the `experiments/` folder you can find an experiment folder containing the model checkpoints, the checkpoint of validation minimum, and a folder containing a tensorboard summary, which can be started at with
 ```
@@ -122,7 +124,7 @@ python generate.py -std_dev 0.1 0.01 -res 32 -m ShapeNet32Vox -checkpoint 10 -ba
 generates the reconstructions of the, during training unseen, test examples from ShapeNet into  the folder 
 ```experiments/YOUR_EXPERIMENT/evaluation_CHECKPOINT_@256/generation```.
 With `-checkpoint` you can choose the IF-Net model checkpoint. Use the model with minimum validation error for this, 
-`-batch_points` indicates the number of points that fit into GPU memory at once (400k for small GPU's), the other parameters are set as during training. 
+`-batch_points` indicates the number of points that fit into GPU memory at once (400k for small GPU's). Please also add all parameters set during training. 
 > The generation script can be run on multiple machines in parallel in order to increase generation speed significantly. Also, consider using the maximal batch size possible for your GPU.
 ## Evaluation
 Please run
