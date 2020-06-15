@@ -9,8 +9,7 @@
 [Supplementaty](https://virtualhumans.mpi-inf.mpg.de/papers/chibane20ifnet/chibane20ifnet_supp.pdf) -
 [Project Website](https://virtualhumans.mpi-inf.mpg.de/ifnets/) -
 [Arxiv](https://arxiv.org/abs/2003.01456) -
-Video -
-Slides -
+[Video](https://youtu.be/cko07jINRZg) -
 Published in CVPR 2020.
 
 
