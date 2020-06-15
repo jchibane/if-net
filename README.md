@@ -51,7 +51,7 @@ cd ../..
 
 ## Pretrained Models
 
-Pretrained models will be mada availiable July 1th.
+Pretrained models will be mada availiable July 1st.
 
 ## Data Preparation
 The full prepared data will take up 800 GB in total. Download the [ShapeNet](https://www.shapenet.org/) data preprocessed by [Xu et. al. NeurIPS'19] from [here](https://drive.google.com/drive/folders/1QGhDW335L7ra31uw5U-0V7hB-viA0JXr)
