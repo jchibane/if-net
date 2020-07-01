@@ -48,10 +48,6 @@ python setup.py build_ext --inplace
 cd ../..
 ```
 
-## Pretrained Models
-
-Pretrained models will be mada availiable July 1st.
-
 ## Data Preparation
 The full prepared data will take up 800 GB in total. Download the [ShapeNet](https://www.shapenet.org/) data preprocessed by [Xu et. al. NeurIPS'19] from [here](https://drive.google.com/drive/folders/1QGhDW335L7ra31uw5U-0V7hB-viA0JXr)
 into the `shapenet` folder.
@@ -150,6 +146,10 @@ The quantitative evaluation of all reconstructions and inputs are gathered and p
 python data_processing/evaluate_gather.py -voxel_input -res 32 -generation_path experiments/iVoxels_dist-0.5_0.5_sigmas-0.1_0.01_v32_mShapeNet32Vox/evaluation_10_@256/generation/
 ```
 where you should use `-voxel_input` for Voxel Super-Resolution experiments, with `-res` specifying the input resolution or `-pc_input` for Point Cloud Completion, with `-points` specifying the number of points used.
+
+## Pretrained Models
+
+Pretrained models can be found [here](https://drive.google.com/drive/folders/1fUjs6yp8XsnrXazfj309HYOgCIj3WDy6?usp=sharing).
 
 ## Contact
 
