@@ -14,6 +14,9 @@ Published in CVPR 2020.
 
 
 #### Citation
+
+If you find our code or paper usful for your project, please consider citing:
+
     @inproceedings{chibane20ifnet,
         title = {Implicit Functions in Feature Space for 3D Shape Reconstruction and Completion},
         author = {Chibane, Julian and Alldieck, Thiemo and Pons-Moll, Gerard},
