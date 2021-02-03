@@ -152,7 +152,7 @@ where you should use `-voxel_input` for Voxel Super-Resolution experiments, with
 
 ## Pretrained Models
 
-Pretrained models can be found [here](https://drive.google.com/drive/folders/1fUjs6yp8XsnrXazfj309HYOgCIj3WDy6?usp=sharing).
+Pretrained models can be found [here](https://nextcloud.mpi-klsb.mpg.de/index.php/s/rdBogFjm3LSxYGy).
 
 ## Contact
 
