@@ -1,6 +1,6 @@
 import trimesh
 import numpy as np
-from data_processing.libmesh.inside_mesh import check_mesh_contains
+from libmesh.inside_mesh import check_mesh_contains
 import math
 import os
 import glob

@@ -9,8 +9,8 @@ import numpy as np
 
 # python data_processing/filter_corrupted.py -file 'voxelization_32.npy'
 
-def filter(path):
-
+def filter(tmp_path):
+    path, delete, file = tmp_path
     if not os.path.exists('{}/{}'.format(path,file)):
         print('Remove: {}'.format(path, file))
         if delete:
@@ -27,10 +27,16 @@ parser.set_defaults(delete=False)
 file = parser.parse_args().file
 delete = parser.parse_args().delete
 
-ROOT = 'shapenet/data/'
-
-p = Pool(mp.cpu_count())
-p.map(filter, glob.glob(ROOT + '/*/*/'))
+#ROOT = 'shapenet/data/'
+ROOT = '../SHARP_data/track1/test_partial'
+paths = glob.glob(ROOT + '/*/*/')
+new_paths = []
+for i , path in enumerate(paths):
+    new_paths.append((path, delete, file))
+#p = Pool(mp.cpu_count())
+#p.map(filter, new_paths)
+for new_path in new_paths:
+    filter(new_path)
 
 def update_split():
 

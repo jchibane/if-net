@@ -12,7 +12,7 @@ import torch
 class VoxelizedDataset(Dataset):
 
 
-    def __init__(self, mode, res = 32,  voxelized_pointcloud = False, pointcloud_samples = 3000, data_path = 'shapenet/data/', split_file = 'shapenet/split.npz',
+    def __init__(self, mode, res = 32,  voxelized_pointcloud = False, pointcloud_samples = 3000, data_path = '/cluster/project/infk/courses/252-0579-00L/group20/SHARP_data/', split_file = '/cluster/project/infk/courses/252-0579-00L/group20/SHARP_data/track1/split.npz',
                  batch_size = 64, num_sample_points = 1024, num_workers = 12, sample_distribution = [1], sample_sigmas = [0.015], **kwargs):
 
         self.sample_distribution = np.array(sample_distribution)
@@ -44,13 +44,20 @@ class VoxelizedDataset(Dataset):
 
     def __getitem__(self, idx):
         path = self.path + self.data[idx]
+        # last = path.split(os.sep)[-1] # scan name
+        # second_last = path.split(os.sep)[-2] # determine if it is partial data
+        # substring = "partial"
+        # if substring in second_last:
+        #     path = path + last + ""
+        #     path = os.path.join(path, )
+
 
         if not self.voxelized_pointcloud:
-            occupancies = np.load(path + '/voxelization_{}.npy'.format(self.res))
+            occupancies = np.load(path + '_voxelization_{}.npy'.format(self.res))
             occupancies = np.unpackbits(occupancies)
             input = np.reshape(occupancies, (self.res,)*3)
         else:
-            voxel_path = path + '/voxelized_point_cloud_{}res_{}points.npz'.format(self.res, self.pointcloud_samples)
+            voxel_path = path + '_voxelized_point_cloud_{}res_{}points.npz'.format(self.res, self.pointcloud_samples)
             occupancies = np.unpackbits(np.load(voxel_path)['compressed_occupancies'])
             input = np.reshape(occupancies, (self.res,)*3)
 
@@ -59,7 +66,7 @@ class VoxelizedDataset(Dataset):
         occupancies = []
 
         for i, num in enumerate(self.num_samples):
-            boundary_samples_path = path + '/boundary_{}_samples.npz'.format(self.sample_sigmas[i])
+            boundary_samples_path = path + '_boundary_{}_samples.npz'.format(self.sample_sigmas[i])
             boundary_samples_npz = np.load(boundary_samples_path)
             boundary_sample_points = boundary_samples_npz['points']
             boundary_sample_coords = boundary_samples_npz['grid_coords']

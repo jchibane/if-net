@@ -8,8 +8,8 @@ import argparse
 
 
 
-def create_voxel_off(path):
-
+def create_voxel_off(tmp_path):
+    path, unpackbits, res, min, max = tmp_path
 
     voxel_path = path + '/voxelization_{}.npy'.format( res)
     off_path = path + '/voxelization_{}.off'.format( res)
@@ -41,12 +41,19 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    ROOT = 'shapenet/data'
+    #ROOT = 'shapenet/data'
+    ROOT = '../SHARP_data/track1/test_partial'
 
     unpackbits = True
     res = args.res
     min = -0.5
     max = 0.5
 
+    paths = glob.glob(ROOT + '/*/*/')
+    new_paths = []
+    for path in paths:
+        new_paths.append((path, unpackbits, res, min, max))
+
+
     p = Pool(mp.cpu_count())
-    p.map(create_voxel_off, glob.glob( ROOT + '/*/*/'))
+    p.map(create_voxel_off, new_paths)

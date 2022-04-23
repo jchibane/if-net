@@ -73,6 +73,8 @@ def save_mesh(data_tupel):
     mesh.export(export_path + 'surface_reconstruction.off')
 
 def create_meshes(data_tupels):
-    p = Pool(mp.cpu_count())
-    p.map(save_mesh, data_tupels)
-    p.close()
+    # p = Pool(mp.cpu_count())
+    # p.map(save_mesh, data_tupels)
+    # p.close()
+    for data_tupel in data_tupels:
+        save_mesh(data_tupel)

@@ -10,16 +10,17 @@ import argparse
 import random
 import traceback
 
-ROOT = 'shapenet/data/'
 
-def voxelized_pointcloud_sampling(path):
+def voxelized_pointcloud_sampling(tmp_path):
+    path, off_path, args, grid_points, kdtree, bb_max, bb_min = tmp_path
     try:
-        out_file = path + '/voxelized_point_cloud_{}res_{}points.npz'.format(args.res, args.num_points)
+        fname= os.path.splitext(off_path)[0]
+        out_file = fname + '_voxelized_point_cloud_{}res_{}points.npz'.format(args.res, args.num_points)
 
         if os.path.exists(out_file):
             print('File exists. Done.')
             return
-        off_path = path + '/isosurf_scaled.off'
+        off_path = off_path
 
 
         mesh = trimesh.load(off_path)
@@ -45,10 +46,18 @@ if __name__ == '__main__':
         description='Run point cloud sampling'
     )
 
-    parser.add_argument('-res', type=int)
-    parser.add_argument('-num_points', type=int)
+    parser.add_argument('-res', default = "128", type=int)
+    parser.add_argument('-num_points', default = "300", type=int)
+    parser.add_argument('-data', type=str)
 
     args = parser.parse_args()
+
+    if args.data == "train":
+        ROOT = '../SHARP_data/track1/train_partial'
+    elif args.data == "test":
+        ROOT = '../SHARP_data/track1/test_partial'
+    elif args.data == "test-codalab-partial":
+        ROOT = '../SHARP_data/track1/test-codalab-partial'
 
 
     bb_min = -0.5
@@ -60,8 +69,13 @@ if __name__ == '__main__':
     kdtree = KDTree(grid_points)
 
     p = Pool(mp.cpu_count())
-    paths = glob(ROOT + '/*/*/')
+    off_paths = glob(ROOT + '/*/*scaled.off')
+    new_paths = []
+    for off_path in off_paths:
+        path = os.path.split(off_path)[0]
+        new_paths.append((path, off_path, args, grid_points, kdtree, bb_max, bb_min))
+
 
     # enabeling to run te script multiple times in parallel: shuffling the data
-    random.shuffle(paths)
-    p.map(voxelized_pointcloud_sampling, paths)
+    random.shuffle(off_paths)
+    p.map(voxelized_pointcloud_sampling, new_paths)
