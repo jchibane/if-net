@@ -53,7 +53,7 @@ class VoxelizedDataset(Dataset):
 
 
         if not self.voxelized_pointcloud:
-            occupancies = np.load(path + '_voxelization_{}.npy'.format(self.res))
+            occupancies = np.load(path[:-6] + '_voxelization_{}.npy'.format(self.res))
             occupancies = np.unpackbits(occupancies)
             input = np.reshape(occupancies, (self.res,)*3)
         else:
