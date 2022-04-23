@@ -20,9 +20,9 @@ def boundary_sampling(tmp_path):
         fname = os.path.splitext(off_path)[0]
         out_file = fname +'_boundary_{}_samples.npz'.format(args.sigma)
 
-        if os.path.exists(out_file):
-            print('Boundary file exists. Done.')
-            return
+        # if os.path.exists(out_file):
+        #     print('Boundary file exists. Done.')
+        #     return
 
         mesh = trimesh.load(off_path) # trimesh.Trimesh
         points = mesh.sample(sample_num) # Return random samples distributed across the surface of the mesh
@@ -38,7 +38,7 @@ def boundary_sampling(tmp_path):
         second_last = root.split(os.sep)[-2]
         second_last = second_last[:-8]
         mesh_gt = trimesh.load(os.path.join(root,"..","..",second_last,last,last+"_normalized_scaled.off"))
-        occupancies = iw.implicit_waterproofing(mesh, boundary_points)[0]
+        occupancies = iw.implicit_waterproofing(mesh_gt, boundary_points)[0]
 
         np.savez(out_file, points=boundary_points, occupancies = occupancies, grid_coords= grid_coords)
         print('Finished {}'.format(path))

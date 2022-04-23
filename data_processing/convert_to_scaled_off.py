@@ -75,7 +75,8 @@ if __name__ == '__main__':
             p.apply_async(scale,(fname,))     
             # p.apply_async(to_off,(fname,))
         except:
-            print(f"Exception while Loading {file}")
+            # print(f"Exception while Loading {file}")
+            pass
     # for file in tqdm.tqdm(glob.glob(INPUT_PATH + '/*/*.off'), desc = 'scale'):
     #     fname= os.path.splitext(file)[0]
     #     if os.path.exists(fname+"_scaled.off"):
