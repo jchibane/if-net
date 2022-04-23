@@ -11,8 +11,11 @@ import argparse
 def create_voxel_off(tmp_path):
     path, unpackbits, res, min, max = tmp_path
 
-    voxel_path = path + '/voxelization_{}.npy'.format( res)
-    off_path = path + '/voxelization_{}.off'.format( res)
+    voxel_path = path + '_voxelization_{}.npy'.format( res)
+    off_path = path + '_voxelization_{}.off'.format( res)
+    if os.path.exists(off_path):
+        print('VPC File exists. Done.')
+        return
 
 
     if unpackbits:
@@ -38,20 +41,30 @@ if __name__ == '__main__':
         description='Run voxalization to off'
     )
     parser.add_argument('-res', type=int)
+    parser.add_argument('-data', type=str)
 
     args = parser.parse_args()
 
-    #ROOT = 'shapenet/data'
-    ROOT = '../SHARP_data/track1/test_partial'
+    if args.data == "train":
+        ROOT = '../SHARP_data/track1/train_partial'
+    elif args.data == "test":
+        ROOT = '../SHARP_data/track1/test_partial'
+    elif args.data == "test-codalab-partial":
+        ROOT = '../SHARP_data/track1/test-codalab-partial'
+    elif args.data == "train_gt":
+        ROOT = '../SHARP_data/track1/train'
+    elif args.data == "test_gt":
+        ROOT = '../SHARP_data/track1/test'
 
     unpackbits = True
     res = args.res
     min = -0.5
     max = 0.5
 
-    paths = glob.glob(ROOT + '/*/*/')
+    npz_paths = glob.glob(ROOT + '/*/*..npz')
     new_paths = []
-    for path in paths:
+    for npz_path in npz_paths:
+        path = os.path.splitext(npz_path)[0]
         new_paths.append((path, unpackbits, res, min, max))
 
 

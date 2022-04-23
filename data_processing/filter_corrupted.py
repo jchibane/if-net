@@ -11,7 +11,8 @@ import numpy as np
 
 def filter(tmp_path):
     path, delete, file = tmp_path
-    if not os.path.exists('{}/{}'.format(path,file)):
+    path = os.path.splitext(path)[0]
+    if not os.path.exists('{}_{}'.format(path,file)):
         print('Remove: {}'.format(path, file))
         if delete:
             shutil.rmtree('{}'.format(path))
@@ -22,14 +23,25 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument('-file', type=str)
 parser.add_argument('-delete', action='store_true')
+parser.add_argument('-data', type=str)
 parser.set_defaults(delete=False)
 
 file = parser.parse_args().file
 delete = parser.parse_args().delete
+data = parser.parse_args().data
 
-#ROOT = 'shapenet/data/'
-ROOT = '../SHARP_data/track1/test_partial'
-paths = glob.glob(ROOT + '/*/*/')
+if data == "train":
+    ROOT = '../SHARP_data/track1/train_partial'
+elif data == "test":
+    ROOT = '../SHARP_data/track1/test_partial'
+elif data == "test-codalab-partial":
+    ROOT = '../SHARP_data/track1/test-codalab-partial'
+elif data == "train_gt":
+    ROOT = '../SHARP_data/track1/train'
+elif data == "test_gt":
+    ROOT = '../SHARP_data/track1/test'
+
+paths = glob.glob(ROOT + '/*/*..npz')
 new_paths = []
 for i , path in enumerate(paths):
     new_paths.append((path, delete, file))

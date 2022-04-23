@@ -12,13 +12,14 @@ import argparse
 
 def voxelize(in_path, res):
     try:
-
-        filename = os.path.join(in_path, 'voxelization_{}.npy'.format(res))
+        in_path = os.path.splitext(in_path)[0]
+        filename = in_path + '_voxelization_{}.npy'.format(res)
 
         if os.path.exists(filename):
+            print('Voxelization file exists. Done.')
             return
 
-        mesh = trimesh.load(in_path + '/isosurf_scaled.off', process=False)
+        mesh = trimesh.load(in_path + '_scaled.off', process=False)
         occupancies = voxels.VoxelGrid.from_mesh(mesh, res, loc=[0, 0, 0], scale=1).data
         occupancies = np.reshape(occupancies, -1)
 
@@ -39,10 +40,20 @@ if __name__ == '__main__':
         description='Run voxalization'
     )
     parser.add_argument('-res', type=int)
+    parser.add_argument('-data', type=str)
 
     args = parser.parse_args()
 
-    ROOT = 'shapenet/data'
+    if args.data == "train":
+        ROOT = '../SHARP_data/track1/train_partial'
+    elif args.data == "test":
+        ROOT = '../SHARP_data/track1/test_partial'
+    elif args.data == "test-codalab-partial":
+        ROOT = '../SHARP_data/track1/test-codalab-partial'
+    elif args.data == "train_gt":
+        ROOT = '../SHARP_data/track1/train'
+    elif args.data == "test_gt":
+        ROOT = '../SHARP_data/track1/test'
 
     p = Pool(mp.cpu_count())
-    p.map(partial(voxelize, res=args.res), glob.glob( ROOT + '/*/*/'))
+    p.map(partial(voxelize, res=args.res), glob.glob( ROOT + '/*/*..npz'))

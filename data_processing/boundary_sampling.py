@@ -20,9 +20,9 @@ def boundary_sampling(tmp_path):
         fname = os.path.splitext(off_path)[0]
         out_file = fname +'_boundary_{}_samples.npz'.format(args.sigma)
 
-        # if os.path.exists(out_file):
-        #     print('File exists. Done.')
-        #     return
+        if os.path.exists(out_file):
+            print('Boundary file exists. Done.')
+            return
 
         mesh = trimesh.load(off_path) # trimesh.Trimesh
         points = mesh.sample(sample_num) # Return random samples distributed across the surface of the mesh

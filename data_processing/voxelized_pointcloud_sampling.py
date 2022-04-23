@@ -18,7 +18,7 @@ def voxelized_pointcloud_sampling(tmp_path):
         out_file = fname + '_voxelized_point_cloud_{}res_{}points.npz'.format(args.res, args.num_points)
 
         if os.path.exists(out_file):
-            print('File exists. Done.')
+            print('VPC File exists. Done.')
             return
         off_path = off_path
 
@@ -58,6 +58,10 @@ if __name__ == '__main__':
         ROOT = '../SHARP_data/track1/test_partial'
     elif args.data == "test-codalab-partial":
         ROOT = '../SHARP_data/track1/test-codalab-partial'
+    elif args.data == "train_gt":
+        ROOT = '../SHARP_data/track1/train'
+    elif args.data == "test_gt":
+        ROOT = '../SHARP_data/track1/test'
 
 
     bb_min = -0.5
